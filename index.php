@@ -14,16 +14,13 @@ if (isset($_POST['refresh']) && $_POST['refresh'] == 1) {
 }
 
 $comparator = new Comparator('file1.csv', 'file2.csv');
-$added_items = $comparator->getNewProducts();
-$missed_items = $comparator->getMissedProducts();
-$differences = $comparator->getDifferences();
 
 echo $twig->render('results.html.twig', [
     'new_items' => $comparator->new_items,
     'old_items' => $comparator->old_items,
-    'added_items' => $added_items,
-    'missed_items' => $missed_items,
-    'differences' => $differences,
+    'added_items' => $comparator->getNewProducts(),
+    'missed_items' => $comparator->getMissedProducts(),
+    'differences' => $comparator->getDifferences(),
     'file1' => $comparator->file1,
     'file2' => $comparator->file2,
 ]);
