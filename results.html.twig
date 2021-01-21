@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="max-w-5xl mx-auto mt-10 shadow-2xl p-8">
+      <form action="index.php" method="POST" class="flex justify-between items-center flex-wrap mb-4">
+        <input type="hidden" name="refresh" value="1" />
+        <p class="text-xs underline">Data modyfikacji starego pliku: <strong>{{ file1 }}</strong></p>
+        <p class="text-xs underline">Data modyfikacji nowego pliku: <strong>{{ file2 }}</strong></p>
+        <button class="flex items-center justify-between bg-purple-600 text-white text-base font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-purple-200">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 mr-2">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Aktualizuj plik
+        </button>
+      </form>
+
+      {% if differences %}
+        <p class="bg-gray-600 p-2 rounded-md text-white">W następujących produktach nastąpiły zmiany:</p>
+        <div class="overflow-auto">
+          <table class="table-auto border-collapse w-full mt-2">
+            <thead>
+              <tr>
+                <th class="border border-gray-500 bg-gray-300 p-2 text-center">Kod produktu</th>
+                <th class="border border-gray-500 bg-gray-300 p-2 text-center">Stara cena</th>
+                <th class="border border-gray-500 bg-gray-300 p-2 text-center">Nowa cena</th>
+                <th class="border border-gray-500 bg-gray-300 p-2 text-center">Stara dostępność</th>
+                <th class="border border-gray-500 bg-gray-300 p-2 text-center">Nowa dostępność</th>
+              </tr>
+            </thead>
+            {% for item in differences %}
+              <tr>
+                <td class="border border-gray-500 p-1 text-center">{{ item }}</td>
+                <td class="border border-gray-500 p-1 text-center">{{ old_items[item][0] }}</td>
+                <td class="border border-gray-500 p-1 text-center {%if old_items[item][0] != new_items[item][0] %}bg-blue-400{% endif %}">{{ new_items[item][0] }}</td>
+                <td class="border border-gray-500 p-1 text-center">{{ old_items[item][1] }}</td>
+                <td class="border border-gray-500 p-1 text-center {%if old_items[item][1] != new_items[item][1] %} {%if new_items[item][1] %}bg-green-500 {% else %}bg-red-500{% endif %}{% endif %}">{{ new_items[item][1] }}</td>
+              </tr>
+            {% endfor %}
+          </table>
+        </div>
+      {% else %}
+        <p class="text-center text-2xl py-8">Brak zmian w porównywanych plikach</p>
+      {% endif %}
+
+      {% if added_items %}
+        <p class="bg-gray-600 p-2 rounded-md text-white mt-2">W starym pliku nie było podanych produktów:</p>
+        <ul class="px-10 py-2 list-disc">
+          {% for added_item in added_items %}
+            <li>{{ added_item }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      {% if missed_items %}
+        <p class="bg-gray-600 p-2 rounded-md text-white mt-2">W nowym pliku nie ma występujących wcześniej produktów:</p>
+        <ul class="px-10 py-2 list-disc">
+          {% for missed_item in missed_items %}
+            <li>{{ missed_item }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+</body>
+</html>
